@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author Prajwal Tuladhar <praj@infynyxx.com>
  */
-public class ScribeAppender<E> extends AppenderBase<E> {
+public class ScribeAppender extends AppenderBase<ILoggingEvent> {
 
     // The following are configurable via logback configuration
     private String facility = "scribe";
@@ -26,7 +26,7 @@ public class ScribeAppender<E> extends AppenderBase<E> {
     private Map<String, String> additionalFields = new HashMap<String, String>();
 
     // hidden fields (not configurable)
-    private AppenderExecutor<E> appenderExecutor;
+    private AppenderExecutor appenderExecutor;
 
     private TFramedTransport transport = null;
 
@@ -41,14 +41,14 @@ public class ScribeAppender<E> extends AppenderBase<E> {
             addInfo("Opening transport socket");
             transport.open();
             ScribeConverter scribeConverter = new ScribeConverter(facility, additionalFields, scribeHost);
-            appenderExecutor = new AppenderExecutor<E>(client, scribeConverter, category);
+            appenderExecutor = new AppenderExecutor(client, scribeConverter, category);
         } catch (Exception e) {
             throw new RuntimeException("Error initializing appender appenderExecutor", e);
         }
     }
 
     @Override
-    protected void append(E eventObject) {
+    protected void append(ILoggingEvent eventObject) {
         try {
             appenderExecutor.append(eventObject);
         } catch (RuntimeException e) {

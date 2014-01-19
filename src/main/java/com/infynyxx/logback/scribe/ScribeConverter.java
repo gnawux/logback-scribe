@@ -4,6 +4,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
@@ -12,21 +14,23 @@ import java.util.Map;
 /**
  * @author Prajwal Tuladhar <praj@infynyxx.com>
  */
-public class ScribeConverter<E> {
+public class ScribeConverter {
     private final String facility;
     private final Map<String, String> additionalFields;
     private final String hostName;
+
+	private DateFormat df;
 
     public ScribeConverter(String facility, Map<String, String> additionalFields, String hostName) {
         this.facility = facility;
         this.additionalFields = additionalFields;
         this.hostName = hostName;
+		this.df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");
     }
 
-    public String getMessage(E logEvent) {
-        ILoggingEvent eventObject = (ILoggingEvent) logEvent;
+    public String getMessage(ILoggingEvent eventObject) {
 
-        String message = String.format("<%s> %s [%s] %s %s - %s", getHostName(), new Date(eventObject.getTimeStamp()), eventObject.getLevel(), eventObject.getThreadName(), eventObject.getLoggerContextVO(), eventObject.getMessage());
+        String message = String.format("%s %s [%s] - %s %s", getHostName(), this.df.format(new Date(eventObject.getTimeStamp())), eventObject.getLevel(), eventObject.getThreadName(), eventObject.getMessage());
 
         // Format up the stack trace
         IThrowableProxy proxy = eventObject.getThrowableProxy();

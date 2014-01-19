@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author Prajwal Tuladhar <praj@infynyxx.com>
  */
-public class AppenderExecutor<E> {
+public class AppenderExecutor {
 
     private final Client client;
     private final ScribeConverter converter;
@@ -25,7 +25,7 @@ public class AppenderExecutor<E> {
         this.category = category;
     }
 
-    public void append(E logEvent) {
+    public void append(ILoggingEvent logEvent) {
         logEntries.add(new LogEntry(category, converter.getMessage(logEvent)));
         try {
             ResultCode resultCode = client.Log(logEntries);
