@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.Map;
 
 /**
@@ -25,12 +26,27 @@ public class ScribeConverter {
         this.facility = facility;
         this.additionalFields = additionalFields;
         this.hostName = hostName;
-		this.df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");
+		this.df = new SimpleDateFormat("HH:mm:ss.SSSz");
+		this.df.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     public String getMessage(ILoggingEvent eventObject) {
 
-        String message = String.format("%s %s [%s] - %s %s", getHostName(), this.df.format(new Date(eventObject.getTimeStamp())), eventObject.getLevel(), eventObject.getThreadName(), eventObject.getMessage());
+		Map<String, String> mdc = eventObject.getMDCPropertyMap();
+		String thread;
+		String timestamp;
+		if ( mdc.containsKey("sourceThread") ) thread = mdc.get("sourceThread");
+		else thread = eventObject.getThreadName();
+		if ( mdc.containsKey("akkaTimestamp") ) timestamp = mdc.get("akkaTimestamp");
+		else timestamp = this.df.format(new Date(eventObject.getTimeStamp()));
+
+        String message = String.format("%s %s [%s] %s %s - %s", 
+				getHostName(), 
+				timestamp, 
+				thread, 
+				eventObject.getLevel(), 
+				eventObject.getLoggerName(),
+				eventObject.getFormattedMessage());
 
         // Format up the stack trace
         IThrowableProxy proxy = eventObject.getThrowableProxy();
