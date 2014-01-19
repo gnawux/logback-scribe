@@ -2,6 +2,7 @@ package com.infynyxx.logback.scribe;
 
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.core.AppenderBase;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;

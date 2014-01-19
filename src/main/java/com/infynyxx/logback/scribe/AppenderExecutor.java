@@ -5,6 +5,8 @@ import scribe.thrift.LogEntry;
 import scribe.thrift.ResultCode;
 import scribe.thrift.scribe.*;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
